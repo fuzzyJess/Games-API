@@ -31,3 +31,10 @@ describe("3.GET /api/categories", () => {
         })
     })
 })
+// describe("Error handling", () => {
+//     test("status: 404, responds with 'path not found' message", () => {
+//         return request(app)
+//             .get
+//     })
+
+// })
