@@ -12,7 +12,6 @@ app.get('/api/categories', getCategories);
 // error handling middleware functions
 
 app.use((err, req, res, next) => {
-    console.log(err, "< custom err function")
     // handle custom errors
     if (err.status && err.msg) {
         res.status(err.status).send({ msg: err.msg });
