@@ -31,7 +31,6 @@ describe("3.GET /api/categories", () => {
         })
     })
 
-    console.log("testing...")
 })
 // describe("Error handling", () => {
 //     test("status: 404, responds with 'path not found' message", () => {
