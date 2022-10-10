@@ -5,6 +5,13 @@ exports.selectCategories = () => {
     
     .then((data) => {
         const categories = data.rows;
+        console.log(categories, "< categories")
+        if (!categories) {
+            return Promise.reject({
+                status: 400,
+                msg: "Invalid query"
+            });
+        }
         return categories;
     });
 }

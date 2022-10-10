@@ -11,22 +11,27 @@ app.get('/api/categories', getCategories);
 
 // error handling middleware functions
 
-// app.use((err, req, res, next) => {
-//     console.log(err, "< custom err function")
-//     // handle custom errors
-//     if (err.status && err.msg) {
-//         res.status(err.status).send({ msg: err.msg });
-//     } else next(err);
-// })
+app.use((err, req, res, next) => {
+    console.log(err, "< custom err function")
+    // handle custom errors
+    if (err.status && err.msg) {
+        res.status(err.status).send({ msg: err.msg });
+    } else next(err);
+});
+
+// app.all to catch any invalid paths not covered by end points above
 
 app.all("/*", (req, res) => {
     res.status(404).send({ msg: "Path not found"})
 });
 
+// app.use((err, req, res, next) => {
+//     res.status(400).send({ msg: "Invalid query"})
+// });
+
 
 app.use((err, req, res, next) => {
-    console.log(err, "error for 500");
-    res.status(500).send("Server error");
+    res.status(500).send({ msg: "Server error" });
 });
 
 module.exports = app;
