@@ -1,0 +1,10 @@
+const db = require("../db/connection");
+
+exports.selectCategories = () => {
+    console.log("getting into the model");
+    return db.query(`SELECT * FROM categories;`)
+    .then((data) => {
+        const categories = data.rows;
+        return categories;
+    })
+};

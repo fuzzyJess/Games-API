@@ -2,9 +2,9 @@ const app = require('../app');
 
 const request = require('supertest');
 
-const db = require("../db/");
+const db = require("../db/data/test-data/index");
 
-const seed = require("../db/seed")
+const seed = require("../db/seeds/seed")
 
 const testData = require('../db/data/test-data');
 
