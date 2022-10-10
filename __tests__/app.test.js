@@ -18,6 +18,7 @@ describe("3.GET /api/categories", () => {
     test("status: 200, responds with an array of category objects", () => {
         return request(app)
         .get("/api/categories")
+        .expect(200)
         .then(({ body }) => {
             const { categories } = body;
             expect(categories).toHaveLength(4);
@@ -29,13 +30,17 @@ describe("3.GET /api/categories", () => {
                 })
             })
         })
-    })
+    });
 
-})
-// describe("Error handling", () => {
-//     test("status: 404, responds with 'path not found' message", () => {
-//         return request(app)
-//             .get
-//     })
+});
+describe("Error handling", () => {
+    test("status: 404, responds with 'Path not found' message", () => {
+        return request(app)
+            .get("/api/categories/cats")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Path not found");
+            })
+    });
 
-// })
+});
