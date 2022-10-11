@@ -75,25 +75,9 @@ describe("GET requests", () => {
 
 describe("Error handling", () => {
     describe("status 404 errors", () => {
-        test("incorrect api/categories, responds with 'Path not found' message", () => {
+        test("incorrect api path, responds with 'Path not found' message", () => {
             return request(app)
                 .get("/api/kategories")
-                .expect(404)
-                .then(({ body }) => {
-                    expect(body.msg).toBe("Path not found");
-                })
-        });
-        test("incorrect api/users, responds with 'Path not found' message", () => {
-            return request(app)
-                .get("/api/ussers")
-                .expect(404)
-                .then(({ body }) => {
-                    expect(body.msg).toBe("Path not found");
-                })
-        });
-        test("incorrect api/reviews, responds with 'Path not found' message", () => {
-            return request(app)
-                .get("/api/reviows")
                 .expect(404)
                 .then(({ body }) => {
                     expect(body.msg).toBe("Path not found");
