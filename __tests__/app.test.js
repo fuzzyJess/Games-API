@@ -74,12 +74,20 @@ describe("Error handling", () => {
         });
     })
     describe("status 400 errors", () => {
-        test("invalid review_id, responds with 'Review ID not found' message", () => {
+        test("valid review_id type but not in database, responds with 'Review ID not found' message", () => {
             return request(app)
             .get("/api/reviews/95")
             .expect(400)
             .then(({ body }) => {
                 expect(body.msg).toBe("Review ID not found")
+            })
+        })
+        test("invalid review_id, responds with 'Not a vaild Review ID'", () => {
+            return request(app)
+            .get("/api/reviews/bananas")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Not a vaild ID number")
             })
         })
     })

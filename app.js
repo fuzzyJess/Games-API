@@ -27,9 +27,11 @@ app.all("/*", (req, res) => {
     res.status(404).send({ msg: "Path not found"})
 });
 
-// app.use((err, req, res, next) => {
-//     res.status(400).send({ msg: "Invalid query"})
-// });
+app.use((err, req, res, next) => {
+    if (err.code === "22P02") {
+        res.status(400).send({ msg: "Not a vaild ID number"})
+    } else next(err);
+});
 
 
 app.use((err, req, res, next) => {
