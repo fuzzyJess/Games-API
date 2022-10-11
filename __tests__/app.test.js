@@ -52,6 +52,25 @@ describe("GET requests", () => {
             })
         })
     })
+    describe("5.GET /api/users", () => {
+        test("status: 200, responds with array of user objects", () => {
+            return request(app)
+            .get("/api/users")
+            .expect(200)
+            .then(({ body }) => {
+                const { users } = body;
+                expect(users).toHaveLength(4);
+                expect(users).toBeInstanceOf(Array);
+                users.forEach((user) => {
+                    expect.objectContaining({
+                        username: expect.any(String),
+                        name: expect.any(String),
+                        avatar_url: expect.any(String)
+                    })
+                })
+            })
+        })
+    })
 })
 
 describe("Error handling", () => {
