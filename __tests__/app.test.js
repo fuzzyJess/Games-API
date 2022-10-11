@@ -83,6 +83,14 @@ describe("Error handling", () => {
                     expect(body.msg).toBe("Path not found");
                 })
         });
+        test("incorrect api/users, responds with 'Path not found' message", () => {
+            return request(app)
+                .get("/api/ussers")
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Path not found");
+                })
+        });
         test("incorrect api/reviews, responds with 'Path not found' message", () => {
             return request(app)
                 .get("/api/reviows")
