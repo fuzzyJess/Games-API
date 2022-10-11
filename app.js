@@ -2,13 +2,15 @@ const express = require('express');
 
 const { getCategories } = require('./controllers/categories.controllers.js');
 
+const { getReview } = require('./controllers/reviews.controllers.js');
+
 const app = express();
 
 app.use(express.json());
 
 app.get('/api/categories', getCategories);
 
-//app.get('/api/reviews/:review_id', getReview);
+app.get('/api/reviews/:review_id', getReview);
 
 // error handling middleware functions
 
@@ -25,9 +27,11 @@ app.all("/*", (req, res) => {
     res.status(404).send({ msg: "Path not found"})
 });
 
-// app.use((err, req, res, next) => {
-//     res.status(400).send({ msg: "Invalid query"})
-// });
+app.use((err, req, res, next) => {
+    if (err.code === "22P02") {
+        res.status(400).send({ msg: "Not a vaild ID number"})
+    } else next(err);
+});
 
 
 app.use((err, req, res, next) => {

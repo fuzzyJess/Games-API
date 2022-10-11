@@ -29,38 +29,68 @@ describe("GET requests", () => {
             })
         });
     });
-    // describe("4.GET /api/reviews/",() => {
-    //     test("status: 200, responds with a review object containing the correct properties", () => {
-    //         return request(app)
-    //         .get("/api/reviews/3")
-    //         .expect(200)
-    //         .then(({ body }) => {
-    //             const { review } = body;
-    //             expect(review).toBeInstanceOf(Object);
-    //             expect(review).toEqual({
-    //                 title: 'Ultimate Werewolf',
-    //                 designer: 'Akihisa Okui',
-    //                 owner: 'bainesface',
-    //                 review_img_url:
-    //                   'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
-    //                 review_body: "We couldn't find the werewolf!",
-    //                 category: 'social deduction',
-    //                 created_at: new Date(1610964101251),
-    //                 votes: 5
-    //               });
-    //         })
-    //     })
-    // })
+    describe("4.GET /api/reviews/",() => {
+        test("status: 200, responds with a review object containing the correct properties", () => {
+            return request(app)
+            .get("/api/reviews/3")
+            .expect(200)
+            .then(({ body }) => {
+                const { review } = body;
+                expect(review).toBeInstanceOf(Object);
+                expect(review).toEqual({
+                    review_id: 3,
+                    title: 'Ultimate Werewolf',
+                    designer: 'Akihisa Okui',
+                    owner: 'bainesface',
+                    review_img_url:
+                      'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                    review_body: "We couldn't find the werewolf!",
+                    category: 'social deduction',
+                    created_at: "2021-01-18T10:01:41.251Z",
+                    votes: 5
+                  });
+            })
+        })
+    })
 })
 
 describe("Error handling", () => {
-    test("status: 404, responds with 'Path not found' message", () => {
-        return request(app)
-            .get("/api/kategories")
-            .expect(404)
-            .then(({ body }) => {
-                expect(body.msg).toBe("Path not found");
+    describe("status 404 errors", () => {
+        test("incorrect api/categories, responds with 'Path not found' message", () => {
+            return request(app)
+                .get("/api/kategories")
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Path not found");
+                })
+        });
+        test("incorrect api/reviews, responds with 'Path not found' message", () => {
+            return request(app)
+                .get("/api/reviows")
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Path not found");
+                })
+        });
+        test("valid review_id type but not in database, responds with 'Review ID not found' message", () => {
+            return request(app)
+                .get("/api/reviews/95")
+                .expect(404)
+                .then(({ body }) => {
+                expect(body.msg).toBe("Review ID not found")
             })
-    });
+    })
+    describe("status 400 errors", () => {
+        
+        })
+        test("invalid review_id, responds with 'Not a vaild Review ID'", () => {
+            return request(app)
+            .get("/api/reviews/bananas")
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Not a vaild ID number")
+            })
+        })
+    })
 
 });
