@@ -52,6 +52,25 @@ describe("GET requests", () => {
             })
         })
     })
+    describe("5.GET /api/users", () => {
+        test("status: 200, responds with array of user objects", () => {
+            return request(app)
+            .get("/api/users")
+            .expect(200)
+            .then(({ body }) => {
+                const { users } = body;
+                expect(users).toHaveLength(4);
+                expect(users).toBeInstanceOf(Array);
+                users.forEach((user) => {
+                    expect.objectContaining({
+                        username: expect.any(String),
+                        name: expect.any(String),
+                        avatar_url: expect.any(String)
+                    })
+                })
+            })
+        })
+    })
 })
 
 describe("Error handling", () => {
@@ -59,6 +78,14 @@ describe("Error handling", () => {
         test("incorrect api/categories, responds with 'Path not found' message", () => {
             return request(app)
                 .get("/api/kategories")
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Path not found");
+                })
+        });
+        test("incorrect api/users, responds with 'Path not found' message", () => {
+            return request(app)
+                .get("/api/ussers")
                 .expect(404)
                 .then(({ body }) => {
                     expect(body.msg).toBe("Path not found");
