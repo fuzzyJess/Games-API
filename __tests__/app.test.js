@@ -55,13 +55,22 @@ describe("GET requests", () => {
 })
 
 describe("Error handling", () => {
-    test("status: 404, responds with 'Path not found' message", () => {
+    test("status: 404, incorrect api/categories, responds with 'Path not found' message", () => {
         return request(app)
             .get("/api/kategories")
             .expect(404)
             .then(({ body }) => {
                 expect(body.msg).toBe("Path not found");
             })
+    });
+    test("status: 404, incorrect api/reviews, responds with 'Path not found' message", () => {
+        return request(app)
+            .get("/api/reviows")
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.msg).toBe("Path not found");
+            })
+        
     });
 
 });
