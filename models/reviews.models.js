@@ -7,7 +7,7 @@ exports.selectReview = (id) => {
         const review = data.rows[0];
         if (!review) {
             return Promise.reject({
-                status: 400,
+                status: 404,
                 msg: "Review ID not found"
             });
         }
