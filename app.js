@@ -2,13 +2,15 @@ const express = require('express');
 
 const { getCategories } = require('./controllers/categories.controllers.js');
 
+const { getReview } = require('./controllers/reviews.controllers.js');
+
 const app = express();
 
 app.use(express.json());
 
 app.get('/api/categories', getCategories);
 
-//app.get('/api/reviews/:review_id', getReview);
+app.get('/api/reviews/:review_id', getReview);
 
 // error handling middleware functions
 

@@ -29,28 +29,29 @@ describe("GET requests", () => {
             })
         });
     });
-    // describe("4.GET /api/reviews/",() => {
-    //     test("status: 200, responds with a review object containing the correct properties", () => {
-    //         return request(app)
-    //         .get("/api/reviews/3")
-    //         .expect(200)
-    //         .then(({ body }) => {
-    //             const { review } = body;
-    //             expect(review).toBeInstanceOf(Object);
-    //             expect(review).toEqual({
-    //                 title: 'Ultimate Werewolf',
-    //                 designer: 'Akihisa Okui',
-    //                 owner: 'bainesface',
-    //                 review_img_url:
-    //                   'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
-    //                 review_body: "We couldn't find the werewolf!",
-    //                 category: 'social deduction',
-    //                 created_at: new Date(1610964101251),
-    //                 votes: 5
-    //               });
-    //         })
-    //     })
-    // })
+    describe("4.GET /api/reviews/",() => {
+        test("status: 200, responds with a review object containing the correct properties", () => {
+            return request(app)
+            .get("/api/reviews/3")
+            .expect(200)
+            .then(({ body }) => {
+                const { review } = body;
+                expect(review).toBeInstanceOf(Object);
+                expect(review).toEqual({
+                    review_id: 3,
+                    title: 'Ultimate Werewolf',
+                    designer: 'Akihisa Okui',
+                    owner: 'bainesface',
+                    review_img_url:
+                      'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                    review_body: "We couldn't find the werewolf!",
+                    category: 'social deduction',
+                    created_at: "2021-01-18T10:01:41.251Z",
+                    votes: 5
+                  });
+            })
+        })
+    })
 })
 
 describe("Error handling", () => {
