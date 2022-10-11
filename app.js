@@ -8,7 +8,7 @@ app.use(express.json());
 
 app.get('/api/categories', getCategories);
 
-app.get('/api/reviews/:review_id', getReview);
+//app.get('/api/reviews/:review_id', getReview);
 
 // error handling middleware functions
 
