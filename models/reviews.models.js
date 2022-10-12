@@ -16,6 +16,19 @@ exports.selectReview = (id) => {
 
 exports.updateReview = (id, votes) => {
     const incVotes = votes.inc_votes;
+
+    if (votes.inc_votes === undefined) {
+        return Promise.reject({
+            status: 400, msg: "Missing input value"
+        });
+    }
+
+    if (typeof incVotes !== 'number') {
+        return Promise.reject({
+            status: 400, msg: "Wrong data type"
+        });
+    }
+    
     return db.query(`UPDATE reviews 
     SET votes = votes + $1 
     WHERE review_id = $2 RETURNING *;`, [incVotes, id])
