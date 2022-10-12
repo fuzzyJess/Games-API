@@ -28,7 +28,7 @@ describe("GET requests", () => {
                 })
         });
     });
-    describe("4.GET /api/reviews/", () => {
+    describe("4.GET /api/reviews/:review_id", () => {
         test("status: 200, responds with a review object containing the correct properties", () => {
             return request(app)
                 .get("/api/reviews/3")
