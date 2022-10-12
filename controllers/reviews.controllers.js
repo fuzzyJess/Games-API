@@ -1,9 +1,18 @@
-const { selectReview } = require('../models/reviews.models.js');
+const { selectReview, updateReview } = require('../models/reviews.models.js');
 
 exports.getReview = (req, res, next) => {
     selectReview(req.params.review_id)
     .then((review) => res.status(200)
     .send({ review }))
+    .catch((err) => {
+        next(err);
+    })
+}
+
+exports.patchReview = (req, res, next) => {
+    updateReview(req.params.review_id, req.body)
+    .then((updatedReview) => res.status(201)
+    .send({ updatedReview }))
     .catch((err) => {
         next(err);
     })
