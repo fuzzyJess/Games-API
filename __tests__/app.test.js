@@ -8,7 +8,6 @@ beforeEach(() => seed(testData));
 
 afterAll(() => db.end());
 
-
 describe("GET requests", () => {
     describe("3.GET /api/categories", () => {
         test("status: 200, responds with an array of category objects", () => {
@@ -46,7 +45,8 @@ describe("GET requests", () => {
                         review_body: "We couldn't find the werewolf!",
                         category: 'social deduction',
                         created_at: "2021-01-18T10:01:41.251Z",
-                        votes: 5
+                        votes: 5,
+                        comment_count: 3
                     });
                 })
         })
@@ -80,7 +80,7 @@ describe("PATCH requests", () => {
                 .expect(201)
                 .then(({ body }) => {
                     const { updatedReview } = body;
-                        expect(updatedReview).toEqual({
+                    expect(updatedReview).toEqual({
                         review_id: 2,
                         title: 'Jenga',
                         designer: 'Leslie Scott',
@@ -90,7 +90,7 @@ describe("PATCH requests", () => {
                         review_body: 'Fiddly fun for all the family',
                         category: 'dexterity',
                         created_at: "2021-01-18T10:01:41.251Z",
-                        votes: 8
+                        votes: 8,
                     })
                 })
         })
@@ -120,12 +120,12 @@ describe("Error handling", () => {
         describe("PATCH requests", () => {
             test("incorrect api path, responds with 'Path not found' message", () => {
                 return request(app)
-                .patch("/api/reviewy/1")
-                .send({ inc_votes: 3 })
-                .expect(404)
-                .then(({ body }) => {
-                    expect(body.msg).toBe("Path not found");
-                })
+                    .patch("/api/reviewy/1")
+                    .send({ inc_votes: 3 })
+                    .expect(404)
+                    .then(({ body }) => {
+                        expect(body.msg).toBe("Path not found");
+                    })
             })
             test("valid review_id type but not in database, responds with 'Review ID not found' message", () => {
                 return request(app)
@@ -170,12 +170,12 @@ describe("Error handling", () => {
             })
             test("when passed empty object in request, responds with 'Missing key value pair' message", () => {
                 return request(app)
-                .patch("/api/reviews/2")
-                .send({})
-                .expect(400)
-                .then(({ body }) => {
-                    expect(body.msg).toBe("Missing input value")
-                })
+                    .patch("/api/reviews/2")
+                    .send({})
+                    .expect(400)
+                    .then(({ body }) => {
+                        expect(body.msg).toBe("Missing input value")
+                    })
             })
         })
     })
