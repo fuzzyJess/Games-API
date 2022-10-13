@@ -105,6 +105,17 @@ describe("GET requests", () => {
                     expect(reviews).toBeInstanceOf(Array);
                 })
         })
+        test("status: 200, responds with array of all review objects sorted by date when no category provided", () => {
+            return request(app)
+                .get("/api/reviews/")
+                .expect(200)
+                .then(({ body }) => {
+                    const { reviews } = body;
+                    expect(reviews).toHaveLength(13);
+                    expect(reviews).toBeInstanceOf(Array);
+                  //  expect(reviews[0]).toEqual()
+                })
+        })
     })
 })
 

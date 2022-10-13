@@ -53,14 +53,22 @@ exports.updateReview = (id, votes) => {
 }
 
 exports.selectReviews = (category) => {
-    return db.query(`
+    const categoryArr = [];
+    let sqlQuery = `
     SELECT reviews.*, COUNT(comments.review_id) ::INT AS comment_count 
     FROM reviews
     LEFT JOIN comments 
-    ON reviews.review_id = comments.review_id
-    WHERE reviews.category = $1
-    GROUP BY reviews.review_id
-    ORDER BY reviews.created_at DESC;`, [category])
+    ON reviews.review_id = comments.review_id `;
+    
+    if (category) {
+        sqlQuery += `WHERE reviews.category = $1`
+        categoryArr.push(category);
+    }
+    sqlQuery +=
+    `GROUP BY reviews.review_id
+    ORDER BY reviews.created_at DESC;`
+
+    return db.query(sqlQuery, categoryArr)
         .then((data) => {
 
             const reviews = data.rows;
