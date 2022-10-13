@@ -70,15 +70,16 @@ describe("GET requests", () => {
                 })
         })
     })
-    describe("8.GET /api/reviews/?sort_by=dexterity", () => {
+    describe("8.GET /api/reviews/?category=dexterity", () => {
         test("status: 200, responds with array of one review object when category provided only matches one", () => {
             return request(app)
-                .get("/api/reviews/?sort_by=dexterity")
+                .get("/api/reviews/?category=dexterity")
                 .expect(200)
                 .then(({ body }) => {
                     const { reviews } = body;
                     expect(reviews).toHaveLength(1);
                     expect(reviews).toBeInstanceOf(Array);
+                    expect(reviews).toBeSorted("created_at", { descending: true })
                     reviews.forEach((review) => {
                         expect.objectContaining({
                             review_id: expect.any(Number),
@@ -97,12 +98,13 @@ describe("GET requests", () => {
         })
         test("status: 200, responds with array of review objects sorted by date when category provided", () => {
             return request(app)
-                .get("/api/reviews/?sort_by=social deduction")
+                .get("/api/reviews/?category=social deduction")
                 .expect(200)
                 .then(({ body }) => {
                     const { reviews } = body;
                     expect(reviews).toHaveLength(11);
                     expect(reviews).toBeInstanceOf(Array);
+                    expect(reviews).toBeSorted("created_at", { descending: true })
                 })
         })
         test("status: 200, responds with array of all review objects sorted by date when no category provided", () => {
@@ -113,7 +115,7 @@ describe("GET requests", () => {
                     const { reviews } = body;
                     expect(reviews).toHaveLength(13);
                     expect(reviews).toBeInstanceOf(Array);
-                  //  expect(reviews[0]).toEqual()
+                    expect(reviews).toBeSorted("created_at", { descending: true })
                 })
         })
     })
@@ -198,7 +200,7 @@ describe("Error handling", () => {
             })
             test("invalid category, responds with 'Invalid category provided' message", () => {
                 return request(app)
-                    .get("/api/reviews?sort_by=dexterititity")
+                    .get("/api/reviews?category=dexterititity")
                     .expect(400)
                     .then(({ body }) => {
                         expect(body.msg).toBe("Invalid category provided")
