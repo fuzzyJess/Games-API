@@ -48,7 +48,51 @@ exports.updateReview = (id, votes) => {
                     msg: "Review ID not found"
                 });
             }
-            console.log(review);
             return review;
+        })
+}
+
+exports.selectReviews = (category) => {
+    const categoryArr = [];
+    let sqlQuery = `
+    SELECT reviews.*, COUNT(comments.review_id) ::INT AS comment_count 
+    FROM reviews
+    LEFT JOIN comments 
+    ON reviews.review_id = comments.review_id `;
+    
+    if (category) {
+        if (![
+            'strategy', 
+            'social deduction',
+            'hidden-roles', 
+            'dexterity', 
+            'push-your-luck', 
+            'roll-and-write',
+            'deck-building', 
+            'engine-building',
+            'euro game',
+            "children's games"
+            ].includes(category)) {
+            return Promise.reject({ status: 400, msg: 'Invalid category provided' });
+          }
+        sqlQuery += `WHERE reviews.category = $1`
+        categoryArr.push(category);
+    }
+    sqlQuery +=
+    `GROUP BY reviews.review_id
+    ORDER BY reviews.created_at DESC;`
+
+    return db.query(sqlQuery, categoryArr)
+        .then((data) => {
+
+            const reviews = data.rows;
+
+            if (!reviews) {
+                return Promise.reject({
+                    status: 404,
+                    msg: "Review ID not found"
+                });
+            }
+            return reviews;
         })
 }
