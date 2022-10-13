@@ -70,7 +70,44 @@ describe("GET requests", () => {
                 })
         })
     })
+    describe("8.GET /api/reviews/?sort_by=dexterity", () => {
+        test("status: 200, responds with array of one review object when category provided only matches one", () => {
+            return request(app)
+                .get("/api/reviews/?sort_by=dexterity")
+                .expect(200)
+                .then(({ body }) => {
+                    const { reviews } = body;
+                    expect(reviews).toHaveLength(1);
+                    expect(reviews).toBeInstanceOf(Array);
+                    reviews.forEach((review) => {
+                        expect.objectContaining({
+                            review_id: expect.any(Number),
+                            title: expect.any(String),
+                            designer: expect.any(String),
+                            owner: expect.any(String),
+                            review_img_url: expect.any(String),
+                            review_body: expect.any(String),
+                            category: expect.any(String),
+                            created_at: expect.any(Number),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(Number)
+                        })
+                    })
+                })
+        })
+        test("status: 200, responds with array of review objects sorted by date when category provided", () => {
+            return request(app)
+                .get("/api/reviews/?sort_by=social deduction")
+                .expect(200)
+                .then(({ body }) => {
+                    const { reviews } = body;
+                    expect(reviews).toHaveLength(11);
+                    expect(reviews).toBeInstanceOf(Array);
+                })
+        })
+    })
 })
+
 describe("PATCH requests", () => {
     describe("6.PATCH /api/reviews", () => {
         test("status: 201, responds with the update review", () => {

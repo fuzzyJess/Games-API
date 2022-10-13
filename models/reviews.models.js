@@ -48,7 +48,29 @@ exports.updateReview = (id, votes) => {
                     msg: "Review ID not found"
                 });
             }
-            console.log(review);
             return review;
+        })
+}
+
+exports.selectReviews = (category) => {
+    return db.query(`
+    SELECT reviews.*, COUNT(comments.review_id) ::INT AS comment_count 
+    FROM reviews
+    LEFT JOIN comments 
+    ON reviews.review_id = comments.review_id
+    WHERE reviews.category = $1
+    GROUP BY reviews.review_id
+    ORDER BY reviews.created_at DESC;`, [category])
+        .then((data) => {
+
+            const reviews = data.rows;
+
+            if (!reviews) {
+                return Promise.reject({
+                    status: 404,
+                    msg: "Review ID not found"
+                });
+            }
+            return reviews;
         })
 }
