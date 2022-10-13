@@ -61,6 +61,20 @@ exports.selectReviews = (category) => {
     ON reviews.review_id = comments.review_id `;
     
     if (category) {
+        if (![
+            'strategy', 
+            'social deduction',
+            'hidden-roles', 
+            'dexterity', 
+            'push-your-luck', 
+            'roll-and-write',
+            'deck-building', 
+            'engine-building',
+            'euro game',
+            "children's games"
+            ].includes(category)) {
+            return Promise.reject({ status: 400, msg: 'Invalid category provided' });
+          }
         sqlQuery += `WHERE reviews.category = $1`
         categoryArr.push(category);
     }
