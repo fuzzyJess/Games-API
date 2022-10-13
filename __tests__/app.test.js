@@ -196,6 +196,14 @@ describe("Error handling", () => {
                         expect(body.msg).toBe("Not a vaild ID number")
                     })
             })
+            test("invalid category, responds with 'Invalid category provided' message", () => {
+                return request(app)
+                    .get("/api/reviews?sort_by=dexterititity")
+                    .expect(400)
+                    .then(({ body }) => {
+                        expect(body.msg).toBe("Invalid category provided")
+                    })
+            })
         })
         describe("PATCH requests", () => {
             test("invalid review_id, responds with 'Not a vaild Review ID' message", () => {
