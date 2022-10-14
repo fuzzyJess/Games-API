@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { selectUser } = require("../models/users.models")
 
 exports.selectReview = (id) => {
     return db.query(`
@@ -80,7 +81,7 @@ exports.selectReviews = (category) => {
     }
     sqlQuery +=
         `GROUP BY reviews.review_id
-    ORDER BY reviews.created_at DESC;`
+        ORDER BY reviews.created_at DESC;`
 
     return db.query(sqlQuery, categoryArr)
         .then((data) => {
@@ -107,5 +108,24 @@ exports.selectComments = (review_id) => {
             const comments = data.rows;
             return comments;
         })
+}
+
+exports.addComment =(review_id, body, username) => {
+
+// use selectUser method here to check that username is in users table
+
+    return db.query(`
+    INSERT INTO comments
+    (body, review_id, author)
+    VALUES 
+    ($1, $2, $3)
+    RETURNING *;
+    `, [body, review_id, username])
+    .then((data) => {
+        const comment = data.rows[0];
+
+        console.log(comment, "< comment");
+        return comment;
+    })
 
 }
