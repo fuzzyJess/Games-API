@@ -318,9 +318,9 @@ describe("Error handling", () => {
                 return request(app)
                 .post("/api/reviews/1/comments")
                 .send({ username: "totoro", body: "Toootooroo!" })
-                .expect(404)
+                .expect(400)
                 .then(({ body }) => {
-                    expect(body.msg).toBe("Not a valid input")
+                    expect(body.msg).toBe("Not a valid username")
                 })
             })
         })

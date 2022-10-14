@@ -44,13 +44,20 @@ exports.getComments = (req, res, next) => {
 }
 
 exports.postComment = (req, res, next) => {
-    
+
     const review_id = req.params.review_id;
     const body = req.body.body;
     const username = req.body.username
 
+    if (!body || !username) {
+        next({
+            status: 400,
+            msg: "Missing input value"
+        });
+    }
+
     selectUser(username).then(() => {
-        return  addComment(review_id, body, username)
+        return addComment(review_id, body, username)
     })
         .then((newComment) => res.status(201)
             .send({ newComment }))
