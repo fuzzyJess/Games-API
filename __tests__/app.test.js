@@ -181,13 +181,21 @@ describe("GET requests", () => {
                             expect(body.msg).toBe("Path not found");
                         })
                 });
-                test("valid review_id type but not in database, responds with 'Review ID not found' message", () => {
+                test("Get reviewsvalid review_id type but not in database, responds with 'Review ID not found' message", () => {
                     return request(app)
                         .get("/api/reviews/95")
                         .expect(404)
                         .then(({ body }) => {
                             expect(body.msg).toBe("Review ID not found")
                         })
+                })
+                test("GET comments - valid review_id type but not in database", () => {
+                    return request(app)
+                    .get("/api/reviews/2000/comments")
+                    .expect(404)
+                    .then(({ body }) => {
+                        expect(body.msg).toBe("Review ID not found")
+                    })
                 })
             })
             describe("PATCH requests", () => {
@@ -213,9 +221,17 @@ describe("GET requests", () => {
         })
         describe("status 400 errors", () => {
             describe("GET requests", () => {
-                test("invalid review_id, responds with 'Not a vaild Review ID' message", () => {
+                test("Get reviews invalid review_id, responds with 'Not a vaild Review ID' message", () => {
                     return request(app)
                         .get("/api/reviews/bananas")
+                        .expect(400)
+                        .then(({ body }) => {
+                            expect(body.msg).toBe("Not a vaild ID number")
+                        })
+                })
+                test("GET comments - invalid review_id, responds with 'Not a vaild Review ID' message", () => {
+                    return request(app)
+                        .get("/api/reviews/bananas/comments")
                         .expect(400)
                         .then(({ body }) => {
                             expect(body.msg).toBe("Not a vaild ID number")

@@ -99,18 +99,6 @@ exports.selectReviews = (category) => {
 
 exports.selectComments = (review_id) => {
 
-    if (review_id === undefined) {
-        return Promise.reject({
-            status: 400, msg: "Missing input value"
-        });
-    }
-
-    // if (typeof review_id !== 'number') {
-    //     return Promise.reject({
-    //         status: 400, msg: "Wrong data type"
-    //     });
-    // }
-
     return db.query(`
     SELECT * FROM comments
     WHERE review_id = $1
@@ -118,13 +106,12 @@ exports.selectComments = (review_id) => {
         .then((data) => {
             const comments = data.rows;
 
-            if (comments.length === 0) {
+            if (!comments[0]) {
                 return Promise.reject({
                     status: 404,
                     msg: "Review ID not found"
                 });
             }
-            console.log(comments)
             return comments;
         })
 
