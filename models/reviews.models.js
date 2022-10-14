@@ -105,13 +105,6 @@ exports.selectComments = (review_id) => {
     ORDER BY created_at DESC;`, [review_id])
         .then((data) => {
             const comments = data.rows;
-
-            if (!comments[0]) {
-                return Promise.reject({
-                    status: 404,
-                    msg: "Review ID not found"
-                });
-            }
             return comments;
         })
 

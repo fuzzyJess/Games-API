@@ -181,7 +181,7 @@ describe("GET requests", () => {
                             expect(body.msg).toBe("Path not found");
                         })
                 });
-                test("Get reviewsvalid review_id type but not in database, responds with 'Review ID not found' message", () => {
+                test("Get reviews valid review_id type but not in database, responds with 'Review ID not found' message", () => {
                     return request(app)
                         .get("/api/reviews/95")
                         .expect(404)
