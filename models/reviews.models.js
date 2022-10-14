@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-const { selectUser } = require("../models/users.models")
 
 exports.selectReview = (id) => {
     return db.query(`
@@ -112,8 +111,6 @@ exports.selectComments = (review_id) => {
 
 exports.addComment =(review_id, body, username) => {
 
-// use selectUser method here to check that username is in users table
-
     return db.query(`
     INSERT INTO comments
     (body, review_id, author)
@@ -121,11 +118,21 @@ exports.addComment =(review_id, body, username) => {
     ($1, $2, $3)
     RETURNING *;
     `, [body, review_id, username])
-    .then((data) => {
-        const comment = data.rows[0];
-
-        console.log(comment, "< comment");
-        return comment;
-    })
+        .then((data) => {
+            const comment = data.rows[0];
+            if (comment === undefined) {
+                return Promise.reject({
+                    status: 400, msg: "Missing input value"
+                });
+            }
+            if (!comment) {
+                return Promise.reject({
+                    status: 404,
+                    msg: "Review ID not found"
+                });
+            }
+            return comment;
+        })
+    
 
 }

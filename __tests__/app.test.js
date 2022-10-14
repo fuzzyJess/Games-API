@@ -172,7 +172,7 @@ describe("PATCH requests", () => {
 
 describe("POST requests", () => {
     describe("10.POST /api/reviews/:review_id/comments", () => {
-        test.only("status: 201, responds with the posted comment", () => {
+        test("status: 201, responds with the posted comment", () => {
             return request(app)
                 .post("/api/reviews/13/comments")
                 .send({ username: "bainesface", body: "Formed a rubble alliance" })
@@ -235,6 +235,17 @@ describe("Error handling", () => {
                     })
             })
         })
+        describe("POST requests", () => {
+            test("valid review_id but doesn't exist in database, responds with 'Review ID not found' message", () => {
+                return request(app)
+                .post("/api/reviews/2330/comments")
+                .send({ username: "bainesface", body: "Formed a rubble alliance" })
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Not a valid input")
+                })
+            })
+        })
     })
     describe("status 400 errors", () => {
         describe("GET requests", () => {
@@ -293,13 +304,23 @@ describe("Error handling", () => {
             })
         })
         describe("POST requests", () => {
+            
+            test("passed empty object, responds with 'Missing input value", () => {
+                return request(app)
+                .post("/api/reviews/2/comments")
+                .send({})
+                .expect(400)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Missing input value")
+                })
+            })
             test("invalid username, responds with 'Not a valid username' message", () => {
                 return request(app)
                 .post("/api/reviews/1/comments")
                 .send({ username: "totoro", body: "Toootooroo!" })
-                .expect(400)
+                .expect(404)
                 .then(({ body }) => {
-                    expect(body.msg).toBe("Not a vaild username")
+                    expect(body.msg).toBe("Not a valid input")
                 })
             })
         })

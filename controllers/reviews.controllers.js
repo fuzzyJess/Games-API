@@ -1,5 +1,6 @@
 const { get } = require('../app.js');
 const { selectReview, updateReview, selectReviews, selectComments, addComment } = require('../models/reviews.models.js');
+const { selectUser } = require("../models/users.models")
 
 exports.getReview = (req, res, next) => {
     selectReview(req.params.review_id)
@@ -48,11 +49,12 @@ exports.postComment = (req, res, next) => {
     const body = req.body.body;
     const username = req.body.username
 
-    addComment(review_id, body, username)
+    selectUser(username).then(() => {
+        return  addComment(review_id, body, username)
+    })
         .then((newComment) => res.status(201)
             .send({ newComment }))
         .catch((err) => {
-            console.log(err);
             next(err);
         })
 }
