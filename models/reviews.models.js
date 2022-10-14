@@ -84,7 +84,7 @@ exports.selectReviews = (category, sort_by, order) => {
         }
         sqlQuery +=
             `GROUP BY reviews.review_id
-            ORDER BY reviews.created_at DESC;`
+                ORDER BY reviews.created_at DESC;`
 
         return db.query(sqlQuery, categoryArr)
             .then((data) => {
@@ -117,5 +117,32 @@ exports.selectComments = (review_id) => {
             const comments = data.rows;
             return comments;
         })
+}
+
+exports.addComment =(review_id, body, username) => {
+
+    return db.query(`
+    INSERT INTO comments
+    (body, review_id, author)
+    VALUES 
+    ($1, $2, $3)
+    RETURNING *;
+    `, [body, review_id, username])
+        .then((data) => {
+            const comment = data.rows[0];
+            if (comment === undefined) {
+                return Promise.reject({
+                    status: 400, msg: "Missing input value"
+                });
+            }
+            if (!comment) {
+                return Promise.reject({
+                    status: 404,
+                    msg: "Review ID not found"
+                });
+            }
+            return comment;
+        })
+    
 
 }
