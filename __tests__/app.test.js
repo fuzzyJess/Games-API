@@ -119,122 +119,161 @@ describe("GET requests", () => {
                 })
         })
     })
-})
-
-describe("PATCH requests", () => {
-    describe("6.PATCH /api/reviews", () => {
-        test("status: 201, responds with the update review", () => {
+    describe("9.GET /api/reviews/:review_id/comments", () => {
+        test("status: 200, responds with array of comment objects sorted in date order that match review_id", () => {
             return request(app)
-                .patch("/api/reviews/2")
-                .send({ inc_votes: 3 })
-                .expect(201)
+                .get("/api/reviews/3/comments")
+                .expect(200)
                 .then(({ body }) => {
-                    const { updatedReview } = body;
-                    expect(updatedReview).toEqual({
-                        review_id: 2,
-                        title: 'Jenga',
-                        designer: 'Leslie Scott',
-                        owner: 'philippaclaire9',
-                        review_img_url:
-                            'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
-                        review_body: 'Fiddly fun for all the family',
-                        category: 'dexterity',
-                        created_at: "2021-01-18T10:01:41.251Z",
-                        votes: 8,
+                    const { comments } = body;
+                    expect(comments).toHaveLength(3);
+                    expect(comments).toBeInstanceOf(Array);
+                    expect(comments).toBeSorted("created_at", { descending: true })
+                    comments.forEach((comment) => {
+                        expect.objectContaining({
+                            comment_id: expect.any(Number),
+                            votes: expect.any(Number),
+                            created_at: expect.any(Number),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            review_id: expect.any(Number)
+                        })
                     })
                 })
         })
     })
 })
 
-describe("Error handling", () => {
-    describe("status 404 errors", () => {
-        describe("GET requests", () => {
-            test("incorrect api path, responds with 'Path not found' message", () => {
+    describe("PATCH requests", () => {
+        describe("6.PATCH /api/reviews", () => {
+            test("status: 201, responds with the update review", () => {
                 return request(app)
-                    .get("/api/kategories")
-                    .expect(404)
-                    .then(({ body }) => {
-                        expect(body.msg).toBe("Path not found");
-                    })
-            });
-            test("valid review_id type but not in database, responds with 'Review ID not found' message", () => {
-                return request(app)
-                    .get("/api/reviews/95")
-                    .expect(404)
-                    .then(({ body }) => {
-                        expect(body.msg).toBe("Review ID not found")
-                    })
-            })
-        })
-        describe("PATCH requests", () => {
-            test("incorrect api path, responds with 'Path not found' message", () => {
-                return request(app)
-                    .patch("/api/reviewy/1")
+                    .patch("/api/reviews/2")
                     .send({ inc_votes: 3 })
-                    .expect(404)
+                    .expect(201)
                     .then(({ body }) => {
-                        expect(body.msg).toBe("Path not found");
-                    })
-            })
-            test("valid review_id type but not in database, responds with 'Review ID not found' message", () => {
-                return request(app)
-                    .patch("/api/reviews/95")
-                    .send({ inc_votes: 3 })
-                    .expect(404)
-                    .then(({ body }) => {
-                        expect(body.msg).toBe("Review ID not found")
+                        const { updatedReview } = body;
+                        expect(updatedReview).toEqual({
+                            review_id: 2,
+                            title: 'Jenga',
+                            designer: 'Leslie Scott',
+                            owner: 'philippaclaire9',
+                            review_img_url:
+                                'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                            review_body: 'Fiddly fun for all the family',
+                            category: 'dexterity',
+                            created_at: "2021-01-18T10:01:41.251Z",
+                            votes: 8,
+                        })
                     })
             })
         })
     })
-    describe("status 400 errors", () => {
-        describe("GET requests", () => {
-            test("invalid review_id, responds with 'Not a vaild Review ID' message", () => {
-                return request(app)
-                    .get("/api/reviews/bananas")
-                    .expect(400)
+
+    describe("Error handling", () => {
+        describe("status 404 errors", () => {
+            describe("GET requests", () => {
+                test("incorrect api path, responds with 'Path not found' message", () => {
+                    return request(app)
+                        .get("/api/kategories")
+                        .expect(404)
+                        .then(({ body }) => {
+                            expect(body.msg).toBe("Path not found");
+                        })
+                });
+                test("Get reviews valid review_id type but not in database, responds with 'Review ID not found' message", () => {
+                    return request(app)
+                        .get("/api/reviews/95")
+                        .expect(404)
+                        .then(({ body }) => {
+                            expect(body.msg).toBe("Review ID not found")
+                        })
+                })
+                test("GET comments - valid review_id type but not in database", () => {
+                    return request(app)
+                    .get("/api/reviews/2000/comments")
+                    .expect(404)
                     .then(({ body }) => {
-                        expect(body.msg).toBe("Not a vaild ID number")
+                        expect(body.msg).toBe("Review ID not found")
                     })
+                })
             })
-            test("invalid category, responds with 'Invalid category provided' message", () => {
-                return request(app)
-                    .get("/api/reviews?category=dexterititity")
-                    .expect(400)
-                    .then(({ body }) => {
-                        expect(body.msg).toBe("Invalid category provided")
-                    })
+            describe("PATCH requests", () => {
+                test("incorrect api path, responds with 'Path not found' message", () => {
+                    return request(app)
+                        .patch("/api/reviewy/1")
+                        .send({ inc_votes: 3 })
+                        .expect(404)
+                        .then(({ body }) => {
+                            expect(body.msg).toBe("Path not found");
+                        })
+                })
+                test("valid review_id type but not in database, responds with 'Review ID not found' message", () => {
+                    return request(app)
+                        .patch("/api/reviews/95")
+                        .send({ inc_votes: 3 })
+                        .expect(404)
+                        .then(({ body }) => {
+                            expect(body.msg).toBe("Review ID not found")
+                        })
+                })
             })
         })
-        describe("PATCH requests", () => {
-            test("invalid review_id, responds with 'Not a vaild Review ID' message", () => {
-                return request(app)
-                    .patch("/api/reviews/bananas")
-                    .send({ inc_votes: 3 })
-                    .expect(400)
-                    .then(({ body }) => {
-                        expect(body.msg).toBe("Not a vaild ID number")
-                    })
+        describe("status 400 errors", () => {
+            describe("GET requests", () => {
+                test("Get reviews invalid review_id, responds with 'Not a vaild Review ID' message", () => {
+                    return request(app)
+                        .get("/api/reviews/bananas")
+                        .expect(400)
+                        .then(({ body }) => {
+                            expect(body.msg).toBe("Not a vaild ID number")
+                        })
+                })
+                test("GET comments - invalid review_id, responds with 'Not a vaild Review ID' message", () => {
+                    return request(app)
+                        .get("/api/reviews/bananas/comments")
+                        .expect(400)
+                        .then(({ body }) => {
+                            expect(body.msg).toBe("Not a vaild ID number")
+                        })
+                })
+                test("invalid category, responds with 'Invalid category provided' message", () => {
+                    return request(app)
+                        .get("/api/reviews?category=dexterititity")
+                        .expect(400)
+                        .then(({ body }) => {
+                            expect(body.msg).toBe("Invalid category provided")
+                        })
+                })
             })
-            test("wrong data type, responds with 'Wrong data type' message", () => {
-                return request(app)
-                    .patch("/api/reviews/2")
-                    .send({ inc_votes: 'banana' })
-                    .expect(400)
-                    .then(({ body }) => {
-                        expect(body.msg).toBe("Wrong data type")
-                    })
-            })
-            test("when passed empty object in request, responds with 'Missing key value pair' message", () => {
-                return request(app)
-                    .patch("/api/reviews/2")
-                    .send({})
-                    .expect(400)
-                    .then(({ body }) => {
-                        expect(body.msg).toBe("Missing input value")
-                    })
+            describe("PATCH requests", () => {
+                test("invalid review_id, responds with 'Not a vaild Review ID' message", () => {
+                    return request(app)
+                        .patch("/api/reviews/bananas")
+                        .send({ inc_votes: 3 })
+                        .expect(400)
+                        .then(({ body }) => {
+                            expect(body.msg).toBe("Not a vaild ID number")
+                        })
+                })
+                test("wrong data type, responds with 'Wrong data type' message", () => {
+                    return request(app)
+                        .patch("/api/reviews/2")
+                        .send({ inc_votes: 'banana' })
+                        .expect(400)
+                        .then(({ body }) => {
+                            expect(body.msg).toBe("Wrong data type")
+                        })
+                })
+                test("when passed empty object in request, responds with 'Missing key value pair' message", () => {
+                    return request(app)
+                        .patch("/api/reviews/2")
+                        .send({})
+                        .expect(400)
+                        .then(({ body }) => {
+                            expect(body.msg).toBe("Missing input value")
+                        })
+                })
             })
         })
-    })
-});
+    });

@@ -59,27 +59,27 @@ exports.selectReviews = (category) => {
     FROM reviews
     LEFT JOIN comments 
     ON reviews.review_id = comments.review_id `;
-    
+
     if (category) {
         if (![
-            'strategy', 
+            'strategy',
             'social deduction',
-            'hidden-roles', 
-            'dexterity', 
-            'push-your-luck', 
+            'hidden-roles',
+            'dexterity',
+            'push-your-luck',
             'roll-and-write',
-            'deck-building', 
+            'deck-building',
             'engine-building',
             'euro game',
             "children's games"
-            ].includes(category)) {
+        ].includes(category)) {
             return Promise.reject({ status: 400, msg: 'Invalid category provided' });
-          }
+        }
         sqlQuery += `WHERE reviews.category = $1`
         categoryArr.push(category);
     }
     sqlQuery +=
-    `GROUP BY reviews.review_id
+        `GROUP BY reviews.review_id
     ORDER BY reviews.created_at DESC;`
 
     return db.query(sqlQuery, categoryArr)
@@ -95,4 +95,17 @@ exports.selectReviews = (category) => {
             }
             return reviews;
         })
+}
+
+exports.selectComments = (review_id) => {
+
+    return db.query(`
+    SELECT * FROM comments
+    WHERE review_id = $1
+    ORDER BY created_at DESC;`, [review_id])
+        .then((data) => {
+            const comments = data.rows;
+            return comments;
+        })
+
 }
