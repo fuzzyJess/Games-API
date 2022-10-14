@@ -292,5 +292,16 @@ describe("Error handling", () => {
                     })
             })
         })
+        describe("POST requests", () => {
+            test("invalid username, responds with 'Not a valid username' message", () => {
+                return request(app)
+                .post("/api/reviews/1/comments")
+                .send({ username: "totoro", body: "Toootooroo!" })
+                .expect(400)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Not a vaild username")
+                })
+            })
+        })
     })
 });
