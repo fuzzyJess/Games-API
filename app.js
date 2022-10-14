@@ -1,7 +1,7 @@
 const express = require('express');
 
 const { getCategories } = require('./controllers/categories.controllers.js');
-const { getReview, patchReview, getReviews, getComments } = require('./controllers/reviews.controllers.js');
+const { getReview, patchReview, getReviews, getComments, postComment } = require('./controllers/reviews.controllers.js');
 const { getUsers } = require('./controllers/users.controllers.js')
 
 const app = express();
@@ -12,8 +12,9 @@ app.get('/api/categories', getCategories);
 
 app.get('/api/reviews/:review_id', getReview);
 app.patch('/api/reviews/:review_id', patchReview);
-app.get('/api/reviews/', getReviews)
-app.get('/api/reviews/:review_id/comments', getComments)
+app.get('/api/reviews/', getReviews);
+app.get('/api/reviews/:review_id/comments', getComments);
+app.post('/api/reviews/:review_id/comments', postComment);
 
 app.get('/api/users/', getUsers);
 
@@ -35,9 +36,12 @@ app.all("/*", (req, res) => {
 app.use((err, req, res, next) => {
     if (err.code === "22P02") {
         res.status(400).send({ msg: "Not a vaild ID number"})
+    } else if (err.code === "23503") {
+        res.status(404).send({ msg: "Not a valid input"})
+    } else if (err.code === "23502") {
+        res.status(400).send({ msg: "Missing input value"})
     } else next(err);
 });
-
 
 app.use((err, req, res, next) => {
     console.log(err, "< err in app.js");
