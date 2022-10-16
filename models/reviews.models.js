@@ -51,60 +51,79 @@ exports.updateReview = (id, votes) => {
             return review;
         })
 }
+// add extra logic to cope with no category being passed
+// needs to return all the reviews when no category is provided
 
-exports.selectReviews = (category, sort_by, order) => {
-   
-    // to handle category query
-   
-    if (!sort_by || order) {
-        const categoryArr = [];
-        let sqlQuery = `
+exports.selectReviews = (category = 'social deduction', sort_by = 'created_at', order = 'DESC') => {
+    
+    const paramsArr = [];
+
+    let sqlQuery = `
         SELECT reviews.*, COUNT(comments.review_id) ::INT AS comment_count 
         FROM reviews
         LEFT JOIN comments 
         ON reviews.review_id = comments.review_id `;
 
-        if (category) {
-            if (![
-                'strategy',
-                'social deduction',
-                'hidden-roles',
-                'dexterity',
-                'push-your-luck',
-                'roll-and-write',
-                'deck-building',
-                'engine-building',
-                'euro game',
-                "children's games"
-            ].includes(category)) {
-                return Promise.reject({ status: 400, msg: 'Invalid category provided' });
+    if (category) {
+        if (![
+            'strategy',
+            'social deduction',
+            'hidden-roles',
+            'dexterity',
+            'push-your-luck',
+            'roll-and-write',
+            'deck-building',
+            'engine-building',
+            'euro game',
+            "children's games"
+        ].includes(category)) {
+            return Promise.reject({ status: 400, msg: 'Invalid category provided' });
+        }
+        sqlQuery += `WHERE reviews.category = $1 `
+        paramsArr.push(category);
+    }
+
+    sqlQuery +=
+        `GROUP BY reviews.review_id `
+    if (![
+        'review_id',
+        'title',
+        'category',
+        'designer',
+        'owner',
+        'created_at',
+        'votes',
+        'comment_count'
+    ].includes(sort_by)) {
+        return Promise.reject({ status: 400, msg: 'Invalid sort_by provided' });
+    }
+    sqlQuery +=
+        `ORDER BY $2 `
+    paramsArr.push(`reviews.${sort_by}`)
+    
+    if (![
+        'DESC',
+        'ASC'
+    ].includes(order.toUpperCase())) {
+        return Promise.reject({ status: 400, msg: 'Invalid order provided' });
+    }
+    sqlQuery += `DESC;`
+
+    return db.query(sqlQuery, paramsArr)
+        .then((data) => {
+
+            const reviews = data.rows;
+
+            if (!reviews) {
+                return Promise.reject({
+                    status: 404,
+                    msg: "Review ID not found"
+                });
             }
-            sqlQuery += `WHERE reviews.category = $1`
-            categoryArr.push(category);
-        }
-        sqlQuery +=
-            `GROUP BY reviews.review_id
-                ORDER BY reviews.created_at DESC;`
+            
+            return reviews;
+        })
 
-        return db.query(sqlQuery, categoryArr)
-            .then((data) => {
-
-                const reviews = data.rows;
-
-                if (!reviews) {
-                    return Promise.reject({
-                        status: 404,
-                        msg: "Review ID not found"
-                    });
-                }
-                return reviews;
-            })
-        }
-
-    // to handle sort_by
-
-    
-    
 }
 
 exports.selectComments = (review_id) => {
@@ -119,7 +138,7 @@ exports.selectComments = (review_id) => {
         })
 }
 
-exports.addComment =(review_id, body, username) => {
+exports.addComment = (review_id, body, username) => {
 
     return db.query(`
     INSERT INTO comments
@@ -143,6 +162,6 @@ exports.addComment =(review_id, body, username) => {
             }
             return comment;
         })
-    
+
 
 }

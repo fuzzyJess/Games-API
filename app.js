@@ -11,9 +11,9 @@ app.use(express.json());
 app.get('/api/categories', getCategories);
 
 app.get('/api/reviews/:review_id', getReview);
-app.patch('/api/reviews/:review_id', patchReview);
 app.get('/api/reviews/', getReviews);
 app.get('/api/reviews/:review_id/comments', getComments);
+app.patch('/api/reviews/:review_id', patchReview);
 app.post('/api/reviews/:review_id/comments', postComment);
 
 app.get('/api/users/', getUsers);
@@ -44,7 +44,6 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-    console.log(err, "< err in app.js");
     res.status(500).send({ msg: "Server error" });
 });
 
