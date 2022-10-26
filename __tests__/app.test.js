@@ -149,9 +149,9 @@ describe("GET requests", () => {
                 .expect(200)
                 .then(({body}) => {
                     const reviews  = body.reviews;
-                    expect(reviews).toHaveLength(11);
+                    expect(reviews).toHaveLength(13);
                     expect(reviews).toBeInstanceOf(Array);
-                    expect(reviews).toBeSorted("created_at", { descending: true })
+                    expect(reviews).toBeSortedBy("created_at", { descending: true })
                     reviews.forEach((review) => {
                         expect.objectContaining({
                             comment_id: expect.any(Number),
