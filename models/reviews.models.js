@@ -54,7 +54,7 @@ exports.updateReview = (id, votes) => {
 // add extra logic to cope with no category being passed
 // needs to return all the reviews when no category is provided
 
-exports.selectReviews = (category = 'social deduction', sort_by = 'created_at', order = 'DESC') => {
+exports.selectReviews = (category, sort_by = 'created_at', order = 'DESC') => {
     
     const paramsArr = [];
 
@@ -79,12 +79,12 @@ exports.selectReviews = (category = 'social deduction', sort_by = 'created_at', 
         ].includes(category)) {
             return Promise.reject({ status: 400, msg: 'Invalid category provided' });
         }
-        sqlQuery += `WHERE reviews.category = $1 `
         paramsArr.push(category);
+        sqlQuery += `WHERE reviews.category = $1 `
     }
 
-    sqlQuery +=
-        `GROUP BY reviews.review_id `
+   
+
     if (![
         'review_id',
         'title',
@@ -94,26 +94,28 @@ exports.selectReviews = (category = 'social deduction', sort_by = 'created_at', 
         'created_at',
         'votes',
         'comment_count'
-    ].includes(sort_by)) {
-        return Promise.reject({ status: 400, msg: 'Invalid sort_by provided' });
-    }
-    sqlQuery +=
-        `ORDER BY $2 `
-    paramsArr.push(`reviews.${sort_by}`)
-    
+        ].includes(sort_by)) {
+        return Promise.reject({ status: 400, msg: 'Invalid order provided' });
+        }
+        
     if (![
         'DESC',
         'ASC'
     ].includes(order.toUpperCase())) {
         return Promise.reject({ status: 400, msg: 'Invalid order provided' });
     }
-    sqlQuery += `DESC;`
 
+    
+ sqlQuery +=
+        `GROUP BY reviews.review_id `
+
+    
+    sqlQuery += `ORDER BY ${sort_by} ${order};`
     return db.query(sqlQuery, paramsArr)
         .then((data) => {
 
             const reviews = data.rows;
-
+            
             if (!reviews) {
                 return Promise.reject({
                     status: 404,
@@ -122,6 +124,8 @@ exports.selectReviews = (category = 'social deduction', sort_by = 'created_at', 
             }
             
             return reviews;
+        }).catch(err => {
+           //console.log(err)
         })
 
 }
