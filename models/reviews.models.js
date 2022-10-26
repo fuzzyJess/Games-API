@@ -51,14 +51,18 @@ exports.updateReview = (id, votes) => {
             return review;
         })
 }
+// add extra logic to cope with no category being passed
+// needs to return all the reviews when no category is provided
 
-exports.selectReviews = (category) => {
-    const categoryArr = [];
+exports.selectReviews = (category, sort_by = 'created_at', order = 'DESC') => {
+    
+    const paramsArr = [];
+
     let sqlQuery = `
-    SELECT reviews.*, COUNT(comments.review_id) ::INT AS comment_count 
-    FROM reviews
-    LEFT JOIN comments 
-    ON reviews.review_id = comments.review_id `;
+        SELECT reviews.*, COUNT(comments.review_id) ::INT AS comment_count 
+        FROM reviews
+        LEFT JOIN comments 
+        ON reviews.review_id = comments.review_id `;
 
     if (category) {
         if (![
@@ -75,26 +79,55 @@ exports.selectReviews = (category) => {
         ].includes(category)) {
             return Promise.reject({ status: 400, msg: 'Invalid category provided' });
         }
-        sqlQuery += `WHERE reviews.category = $1`
-        categoryArr.push(category);
+        paramsArr.push(category);
+        sqlQuery += `WHERE reviews.category = $1 `
     }
-    sqlQuery +=
-        `GROUP BY reviews.review_id
-        ORDER BY reviews.created_at DESC;`
 
-    return db.query(sqlQuery, categoryArr)
+   
+
+    if (![
+        'review_id',
+        'title',
+        'category',
+        'designer',
+        'owner',
+        'created_at',
+        'votes',
+        'comment_count'
+        ].includes(sort_by)) {
+        return Promise.reject({ status: 400, msg: 'Invalid order provided' });
+        }
+        
+    if (![
+        'DESC',
+        'ASC'
+    ].includes(order.toUpperCase())) {
+        return Promise.reject({ status: 400, msg: 'Invalid order provided' });
+    }
+
+    
+ sqlQuery +=
+        `GROUP BY reviews.review_id `
+
+    
+    sqlQuery += `ORDER BY ${sort_by} ${order};`
+    return db.query(sqlQuery, paramsArr)
         .then((data) => {
 
             const reviews = data.rows;
-
+            
             if (!reviews) {
                 return Promise.reject({
                     status: 404,
                     msg: "Review ID not found"
                 });
             }
+            
             return reviews;
+        }).catch(err => {
+           //console.log(err)
         })
+
 }
 
 exports.selectComments = (review_id) => {
@@ -109,7 +142,7 @@ exports.selectComments = (review_id) => {
         })
 }
 
-exports.addComment =(review_id, body, username) => {
+exports.addComment = (review_id, body, username) => {
 
     return db.query(`
     INSERT INTO comments
@@ -133,6 +166,6 @@ exports.addComment =(review_id, body, username) => {
             }
             return comment;
         })
-    
+
 
 }
