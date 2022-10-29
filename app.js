@@ -3,6 +3,7 @@ const express = require('express');
 const { getCategories } = require('./controllers/categories.controllers.js');
 const { getReview, patchReview, getReviews, getComments, postComment } = require('./controllers/reviews.controllers.js');
 const { getUsers } = require('./controllers/users.controllers.js')
+const { deleteComments } = require('./controllers/comments.controllers.js')
 
 const app = express();
 
@@ -17,6 +18,8 @@ app.patch('/api/reviews/:review_id', patchReview);
 app.post('/api/reviews/:review_id/comments', postComment);
 
 app.get('/api/users/', getUsers);
+
+app.delete('/api/comments/:comment_id', deleteComments);
 
 // error handling middleware functions
 

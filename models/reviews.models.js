@@ -51,8 +51,6 @@ exports.updateReview = (id, votes) => {
             return review;
         })
 }
-// add extra logic to cope with no category being passed
-// needs to return all the reviews when no category is provided
 
 exports.selectReviews = (category, sort_by = 'created_at', order = 'DESC') => {
     

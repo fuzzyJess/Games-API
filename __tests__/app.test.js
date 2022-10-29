@@ -3,6 +3,7 @@ const request = require('supertest');
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed")
 const testData = require('../db/data/test-data');
+const { TestWatcher } = require('jest');
 
 beforeEach(() => seed(testData));
 
@@ -143,7 +144,7 @@ describe("GET requests", () => {
         })
     })
     describe("11.GET /api/reviews/?sort_by=date_order=desc", () => {
-        test.only("returns data sorted by default of date and order default of desc", () => {
+        test("returns data sorted by default of date and order default of desc", () => {
             return request(app)
                 .get("/api/reviews/?sort_by=created_at&order=desc")
                 .expect(200)
@@ -205,6 +206,16 @@ describe("GET requests", () => {
                         expect(newComment.body).toBe('Formed a rubble alliance');
                         expect(newComment.author).toBe('bainesface');
                     })
+            })
+        })
+    })
+
+    describe("DELETE requests", () => {
+        describe("12.DELETE /api/comments/:comment_id", () => {
+            test("status: 204, delete given comment by id and return with no content", () => {
+                return request(app)
+                .delete("/api/comments/2")
+                .expect(204)
             })
         })
     })
