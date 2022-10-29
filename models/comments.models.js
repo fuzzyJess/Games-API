@@ -6,15 +6,14 @@ exports.removeComments = (id) => {
     `DELETE FROM comments
     WHERE comment_id = ${id}
     RETURNING *;`)
-    
     .then((data) => {
-        const comments = data.rows;
+        const comments = data.rows[0];
         if (!comments) {
             return Promise.reject({
-                status: 400,
-                msg: "Invalid query"
+                status: 404,
+                msg: "Comment ID not found"
             });
         }
-        return comments;
+        return comments[0];
     });
 }
