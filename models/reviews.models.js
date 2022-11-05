@@ -62,27 +62,28 @@ exports.selectReviews = (category, sort_by = 'created_at', order = 'DESC') => {
         LEFT JOIN comments 
         ON reviews.review_id = comments.review_id `;
 
-    if (category) {
-        if (![
-            'strategy',
-            'social deduction',
-            'hidden-roles',
-            'dexterity',
-            'push-your-luck',
-            'roll-and-write',
-            'deck-building',
-            'engine-building',
-            'euro game',
-            "children's games"
-        ].includes(category)) {
-            return Promise.reject({ status: 400, msg: 'Invalid category provided' });
+    if (category !== undefined) {
+        if (category) {
+            if (![
+                'strategy',
+                'social deduction',
+                'hidden-roles',
+                'dexterity',
+                'push-your-luck',
+                'roll-and-write',
+                'deck-building',
+                'engine-building',
+                'euro game',
+                "children's games"
+            ].includes(category)) {
+                return Promise.reject({ status: 400, msg: 'Invalid category provided' });
+            }
+            paramsArr.push(category);
+            sqlQuery += `WHERE reviews.category = $1 `
         }
-        paramsArr.push(category);
-        sqlQuery += `WHERE reviews.category = $1 `
     }
 
-   
-
+    
     if (![
         'review_id',
         'title',
@@ -108,7 +109,8 @@ exports.selectReviews = (category, sort_by = 'created_at', order = 'DESC') => {
         `GROUP BY reviews.review_id `
 
     
-    sqlQuery += `ORDER BY ${sort_by} ${order};`
+    sqlQuery += `ORDER BY ${sort_by.toUpperCase()} ${order.toUpperCase()};`
+    console.log(sqlQuery, "<query being passed to db", paramsArr, "< paramsArr")
     return db.query(sqlQuery, paramsArr)
         .then((data) => {
 
