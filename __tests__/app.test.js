@@ -165,6 +165,29 @@ describe("GET requests", () => {
                     })
                 })
         })
+        test.only("returns data sorted by the non defaults of title and ascending order", () => {
+            return request(app)
+                .get("/api/reviews/?sort_by=title&order=desc")
+                .expect(200)
+                .then(({ body }) => {
+                    const reviews = body.reviews;
+                    console.log(reviews);
+                    expect(reviews).toHaveLength(13);
+                    expect(reviews).toBeInstanceOf(Array);
+                    reviews.forEach((review) => {
+                        expect.objectContaining({
+                            comment_id: expect.any(Number),
+                            votes: expect.any(Number),
+                            created_at: expect.any(Number),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            review_id: expect.any(Number)
+                        })
+                    })
+                })
+                
+                
+        })
     })
 })
 
