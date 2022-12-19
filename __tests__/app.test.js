@@ -10,6 +10,17 @@ beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
 describe("GET requests", () => {
+    describe("13.GET /api", () => {
+        test.only("status: 200, responds with a JSON describing all the available endpoints on the API", () => {
+            return request(app)
+            .get("/api")
+            .expect(200)
+            .then(({ body }) => {
+                const { endpoints } = body;
+                expect(endpoints).toBeInstanceOf(Object);
+            })
+        })
+    })
     describe("3.GET /api/categories", () => {
         test("status: 200, responds with an array of category objects", () => {
             return request(app)
@@ -165,7 +176,7 @@ describe("GET requests", () => {
                     })
                 })
         })
-        test.only("returns data sorted by the non defaults of title and ascending order", () => {
+        test("returns data sorted by the non defaults of title and ascending order", () => {
             return request(app)
                 .get("/api/reviews/?sort_by=title&order=desc")
                 .expect(200)
