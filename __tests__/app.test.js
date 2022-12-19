@@ -11,7 +11,7 @@ afterAll(() => db.end());
 
 describe("GET requests", () => {
     describe("13.GET /api", () => {
-        test.only("status: 200, responds with a JSON describing all the available endpoints on the API", () => {
+        test("status: 200, responds with a JSON describing all the available endpoints on the API", () => {
             return request(app)
             .get("/api")
             .expect(200)
@@ -182,7 +182,6 @@ describe("GET requests", () => {
                 .expect(200)
                 .then(({ body }) => {
                     const reviews = body.reviews;
-                    console.log(reviews);
                     expect(reviews).toHaveLength(13);
                     expect(reviews).toBeInstanceOf(Array);
                     reviews.forEach((review) => {
