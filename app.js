@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 
+const { getApiEndpoints } = require('./controllers/api.controllers');
 const { getCategories } = require('./controllers/categories.controllers.js');
 const { getReview, patchReview, getReviews, getComments, postComment } = require('./controllers/reviews.controllers.js');
 const { getUsers } = require('./controllers/users.controllers.js')
@@ -10,6 +11,8 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+
+app.get('/api', getApiEndpoints);
 
 app.get('/api/categories', getCategories);
 
