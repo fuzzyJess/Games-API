@@ -4,12 +4,10 @@ This is the backend for my Games app. It uses Express, Node.js, MVC Architecture
 
 ### Live Build: 
 
-- https://fierce-scarf-hare.cyclic.app/
+- https://fierce-scarf-hare.cyclic.app/api
 
 
 ## Installation
-
-- git clone: https://github.com/FelicityRC/fc-games-project-be
 
 ```npm install```
 
